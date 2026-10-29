@@ -2,7 +2,7 @@
 
 ## Overview
 
-This repo contains an exploratory ML workflow for the UBC-OCEAN dataset that focuses on batch-style, data-intensive image processing. The core challenge is working with very large pathology slide images by chunking them into smaller tiles, filtering out mostly-empty/background tiles, and running training and inference in a reproducible way.
+This repo contains an exploratory ML workflow for the UBC-OCEAN dataset that focuses on batch-style, data-intensive image processing. The core challenge is working with very large pathology slide images by chunking them into smaller tiles, filtering out mostly-empty/background tiles, and exploring training and inference workflows.
 
 The project is organized around:
 - Dataset download utilities (Kaggle CLI)
@@ -15,7 +15,7 @@ The project is organized around:
 - Batch-oriented preprocessing of multi-gigabyte image artifacts via tiling and staged execution
 - Practical handling of memory and I/O constraints when working with large PNG slide images
 - GPU-backed training and evaluation workflows using PyTorch / PyTorch Lightning
-- Reproducible experimentation with clear separation between preprocessing, training, and inference
+- Experiment structure with a separation between preprocessing, training, and inference
 
 ## Repository contents
 
@@ -37,17 +37,17 @@ The project is organized around:
 
 - `download.py`
   - Downloads selected training images and thumbnails from the Kaggle competition using `kaggle competitions download`.
-  - Expects an `updated_image_ids.json` file listing image ids and downloads both thumbnails and full images. :contentReference[oaicite:1]{index=1}
+  - Expects an `updated_image_ids.json` file listing image ids and downloads both thumbnails and full images.
 
-- `tiles.py`
+- `src/tiles.py`
   - Implements a tiling pipeline using `pyvips` to crop large images into fixed-size tiles, optionally subsampling tiles, filtering mostly-white tiles, and resizing tiles for downstream training/inference.
-  - Includes a small dataset helper (`TilesFolderDataset`) for iterating over tiles on disk. :contentReference[oaicite:2]{index=2}
+  - Includes a small dataset helper (`TilesFolderDataset`) for iterating over tiles on disk.
 
-- `model.py`
+- `src/model.py`
   - Contains baseline PyTorch model code and supporting transforms/datasets, including:
     - A simple CNN architecture (`UBCOCEANNet1`)
     - Utility transforms (JPEG compression, aspect-ratio rescale, ordinal encoding)
-    - Dataset wrappers for loading images from disk :contentReference[oaicite:3]{index=3}
+    - Dataset wrappers for loading images from disk
 
 ## How the pipeline fits together (high level)
 
@@ -67,6 +67,11 @@ The project is organized around:
   - Pillow, matplotlib
 
 For the tiling pipeline, you may need system-level libvips installed for `pyvips` to work.
+
+
+## Current implementation status
+
+The repository contains exploratory notebooks and Python utilities. It has no automated CI or pinned dependency environment. The standalone tiling module currently references `Dataset` without importing it, and `download.py` expects an `updated_image_ids.json` file that is not included. These issues need correction before the standalone download and tiling workflow can be presented as reproducible.
 
 ## Notes
 
